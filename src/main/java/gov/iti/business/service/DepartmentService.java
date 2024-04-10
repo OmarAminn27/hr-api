@@ -66,19 +66,6 @@ public class DepartmentService {
         }
     }
 
-    private static Department mapDepartmentRequestToDepartment(EntityManager entityManager, DepartmentRequest departmentRequest) {
-        Department department = new Department();
-        department.setDepartmentName(departmentRequest.getDepartmentName());
-        department.setLocation(departmentRequest.getLocation());
-
-        boolean hasEmployees = departmentRequest.getEmployeesIDs() != null && !departmentRequest.getEmployeesIDs().isEmpty();
-        department.setEmployees(hasEmployees ?
-                                departmentRequest.getEmployeesIDs().stream()
-                                        .map(id -> entityManager.find(Employee.class, id)).toList()
-                                : null);
-        return department;
-    }
-
     public static void deleteDepartmentByNumber(Integer departmentNumber) {
         EntityManager entityManager = EntityManagerCreator.generateEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
@@ -98,5 +85,22 @@ public class DepartmentService {
         } finally {
             entityManager.close();
         }
+    }
+
+    private static Department mapDepartmentRequestToDepartment(EntityManager entityManager, DepartmentRequest departmentRequest) {
+        Department department = new Department();
+        department.setDepartmentName(departmentRequest.getDepartmentName());
+        department.setLocation(departmentRequest.getLocation());
+
+        boolean hasEmployees = departmentRequest.getEmployeesIDs() != null && !departmentRequest.getEmployeesIDs().isEmpty();
+        department.setEmployees(hasEmployees ?
+                departmentRequest.getEmployeesIDs().stream()
+                        .map(id -> {
+                            Employee employee = entityManager.find(Employee.class, id);
+                            employee.setDepartment(department);
+                            return employee;
+                        }).toList()
+                : null);
+        return department;
     }
 }

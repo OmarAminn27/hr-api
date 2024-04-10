@@ -2,6 +2,7 @@ package gov.iti.business.service;
 
 import gov.iti.business.entities.Department;
 import gov.iti.business.entities.Employee;
+import gov.iti.business.entities.Project;
 import gov.iti.business.util.EntityManagerCreator;
 import gov.iti.persistence.EmployeeDAO;
 import gov.iti.rest.resources.employee.EmployeeFilterBean;
@@ -16,6 +17,7 @@ import jakarta.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class EmployeeService {
 
@@ -71,7 +73,7 @@ public class EmployeeService {
     }
 
     public static List<Employee> getEmployeesByIDs(EntityManager entityManager, List<Integer> IDs) {
-        return IDs.stream().map(EmployeeService::getEmployee).toList();
+        return IDs.stream().map(id -> employeeDAO.findOneById(id, entityManager).orElse(null)).toList();
     }
 
     public static void deleteEmployee(Employee employee) {
@@ -95,6 +97,21 @@ public class EmployeeService {
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
         try {
+            // remove employee's reference in projects
+            Employee employee = employeeDAO.findOneById(employeeID, entityManager).orElse(null);
+            assert employee != null;
+            for (Project project : employee.getProjects()) {
+                project.getEmployees().remove(employee);
+            }
+
+            // remove employee's reference in departments
+            employee.getDepartment().getEmployees().remove(employee);
+
+            // remove employee's reference in directReports
+            for (Employee directReport : employee.getDirectReports()) {
+                directReport.setManager(null);
+            }
+
             employeeDAO.deleteById(entityManager, employeeID);
             transaction.commit();
         } catch (Exception e) {
@@ -108,9 +125,7 @@ public class EmployeeService {
     public static Employee addEmployee(EmployeeRequest employeeRequest) {
         EntityManager entityManager = EntityManagerCreator.generateEntityManager();
         Employee employee = mapEmployeeRequestToEmployee(entityManager, employeeRequest);
-
         System.out.println("mapped successfully");
-
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
 
@@ -127,37 +142,12 @@ public class EmployeeService {
         }
     }
 
-    private static Employee mapEmployeeRequestToEmployee(EntityManager entityManager, EmployeeRequest employeeRequest) {
-        Employee employee = new Employee();
-        employee.setSalary(employeeRequest.getSalary());
-        employee.setName(employeeRequest.getName());
-        employee.setDateOfBirth(employeeRequest.getDateOfBirth());
-        employee.setAddress(employeeRequest.getAddress());
-
-        employee.setManager((employeeRequest.getManagerID() != null) ?
-                EmployeeService.getEmployee(employeeRequest.getManagerID()) : null);
-
-        boolean hasDirectReports = employeeRequest.getDirectReportsIDs() != null && !employeeRequest.getDirectReportsIDs().isEmpty();
-        employee.setDirectReports(hasDirectReports ?
-                EmployeeService.getEmployeesByIDs(entityManager, employeeRequest.getDirectReportsIDs())
-                : null);
-
-        Department department = entityManager.find(Department.class, employeeRequest.getDepartmentID());
-        employee.setDepartment(department);
-
-        boolean hasProjects = employeeRequest.getProjectsNumbers() != null && !employeeRequest.getProjectsNumbers().isEmpty();
-        employee.setProjects(hasProjects ?
-                new ProjectService().getProjectsByIDs(entityManager, employeeRequest.getProjectsNumbers())
-                : null
-        );
-
-        return employee;
-    }
-
     public static void updateEmployee(Integer employeeID, EmployeeRequest employeeRequest) {
         EntityManager entityManager = EntityManagerCreator.generateEntityManager();
-        Employee employee = mapEmployeeRequestToEmployee(entityManager, employeeRequest);
-        employee.setId(employeeID);
+        Employee employee = employeeDAO.findOneById(employeeID, entityManager).orElse(null);
+        
+        assert employee != null;
+        mapperHelper(employeeRequest, employee, entityManager);
 
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
@@ -170,5 +160,35 @@ public class EmployeeService {
         } finally {
             entityManager.close();
         }
+    }
+
+    private static Employee mapEmployeeRequestToEmployee(EntityManager entityManager, EmployeeRequest employeeRequest) {
+        Employee employee = new Employee();
+        mapperHelper(employeeRequest, employee, entityManager);
+        return employee;
+    }
+
+    private static void mapperHelper(EmployeeRequest employeeRequest, Employee employee, EntityManager entityManager) {
+        employee.setSalary(employeeRequest.getSalary());
+        employee.setName(employeeRequest.getName());
+        employee.setDateOfBirth(employeeRequest.getDateOfBirth());
+        employee.setAddress(employeeRequest.getAddress());
+
+        employee.setManager((employeeRequest.getManagerID() != null) ?
+                employeeDAO.findOneById(employeeRequest.getManagerID(), entityManager).orElse(null) : null);
+
+        boolean hasDirectReports = employeeRequest.getDirectReportsIDs() != null && !employeeRequest.getDirectReportsIDs().isEmpty();
+        employee.setDirectReports(hasDirectReports ?
+                getEmployeesByIDs(entityManager, employeeRequest.getDirectReportsIDs())
+                : null);
+
+        Department department = entityManager.find(Department.class, employeeRequest.getDepartmentID());
+        employee.setDepartment(department);
+
+        boolean hasProjects = employeeRequest.getProjectsNumbers() != null && !employeeRequest.getProjectsNumbers().isEmpty();
+        employee.setProjects(hasProjects ?
+                ProjectService.getProjectsByIDs(entityManager, employeeRequest.getProjectsNumbers())
+                : null
+        );
     }
 }

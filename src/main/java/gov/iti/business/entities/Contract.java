@@ -25,7 +25,8 @@ public class Contract {
     private String contractType;
 
     @MapsId
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
+            CascadeType.REFRESH, CascadeType.REFRESH})
     private Employee employee;
 
     @Override

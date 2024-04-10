@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import gov.iti.business.entities.Department;
 import gov.iti.business.entities.Employee;
 import gov.iti.business.entities.Project;
+import jakarta.json.bind.annotation.JsonbPropertyOrder;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToMany;
 import lombok.Getter;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @ToString
+@JsonbPropertyOrder( {"projectNumber", "projectName", "employeesIDs"})
 public class ProjectResponse implements Serializable {
     private Integer projectNumber;
     private String projectName;

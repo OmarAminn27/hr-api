@@ -26,8 +26,8 @@ public class DepartmentResource {
 
     @GET
     public Response getAllDepartments() {
-        List<Department> allEmployees = DepartmentService.getAllDepartments();
-        List<DepartmentResponse> departmentResponseList = allEmployees.stream().map(DepartmentResponse::new).toList();
+        List<Department> allDepartments = DepartmentService.getAllDepartments();
+        List<DepartmentResponse> departmentResponseList = allDepartments.stream().map(DepartmentResponse::new).toList();
         return Response.ok().entity(departmentResponseList).build();
     }
 
@@ -57,7 +57,7 @@ public class DepartmentResource {
 
     @DELETE
     @Path("/{departmentNumber}")
-    public Response deleteEmployee(@PathParam("departmentNumber") Integer departmentNumber) {
+    public Response deleteDepartment(@PathParam("departmentNumber") Integer departmentNumber) {
         DepartmentService.deleteDepartmentByNumber(departmentNumber);
         return Response.ok("deletion successful").build();
     }

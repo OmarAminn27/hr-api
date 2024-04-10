@@ -5,6 +5,7 @@ import gov.iti.business.entities.Address;
 import gov.iti.business.entities.Department;
 import gov.iti.business.entities.Employee;
 import gov.iti.business.entities.Project;
+import jakarta.json.bind.annotation.JsonbPropertyOrder;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @ToString
+@JsonbPropertyOrder( {"departmentNumber", "departmentName", "location", "employeesIDs"})
 public class DepartmentResponse implements Serializable {
     private Integer departmentNumber;
     private String location;

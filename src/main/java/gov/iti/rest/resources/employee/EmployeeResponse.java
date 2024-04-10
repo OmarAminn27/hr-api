@@ -3,6 +3,9 @@ package gov.iti.rest.resources.employee;
 import gov.iti.business.entities.Address;
 import gov.iti.business.entities.Employee;
 import gov.iti.business.entities.Project;
+import jakarta.json.bind.annotation.JsonbPropertyOrder;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,6 +20,8 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @ToString
+@JsonbPropertyOrder( {"id", "name", "salary", "dateOfBirth", "address", "managerID",
+        "directReportsIDs", "departmentID", "projectNumbers"} )
 public class EmployeeResponse implements Serializable {
     private Integer id;
     private Double salary;

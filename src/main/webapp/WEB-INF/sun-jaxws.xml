@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<endpoints xmlns="http://java.sun.com/xml/ns/jax-ws/ri/runtime" version="2.0">
+    <endpoint
+            name="DepartmentWebService"
+            implementation="gov.iti.soap.DepartmentWebService"
+            url-pattern="/soap/departments" />
+
+<!--    <endpoint-->
+<!--            name="EmployeeWebService"-->
+<!--            implementation="gov.iti.hr.soapcontrollers.EmployeeWebService"-->
+<!--            url-pattern="/soap/employees" />-->
+</endpoints>

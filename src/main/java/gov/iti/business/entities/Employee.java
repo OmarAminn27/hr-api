@@ -41,7 +41,7 @@ public class Employee {
     @JsonBackReference
     private List<Employee> directReports;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "department_id")
     @JsonManagedReference
     private Department department;

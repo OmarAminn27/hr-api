@@ -22,12 +22,12 @@ public class EmployeeService {
     private static final EmployeeDAO employeeDAO = EmployeeDAO.getInstance();
 
 
-    public static Employee getEmployee (Integer employeeID) {
+    public static Employee getEmployee(Integer employeeID) {
         EntityManager entityManager = EntityManagerCreator.generateEntityManager();
         return employeeDAO.findOneById(employeeID, entityManager).orElse(null);
     }
 
-    public static List<Employee> getAllEmployees () {
+    public static List<Employee> getAllEmployees() {
         EntityManager entityManager = EntityManagerCreator.generateEntityManager();
         return employeeDAO.findAll(entityManager);
     }
@@ -74,7 +74,7 @@ public class EmployeeService {
         return IDs.stream().map(EmployeeService::getEmployee).toList();
     }
 
-    public static void deleteEmployee(Employee employee){
+    public static void deleteEmployee(Employee employee) {
         Integer employeeId = employee.getId();
         EntityManager entityManager = EntityManagerCreator.generateEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
@@ -90,7 +90,7 @@ public class EmployeeService {
         }
     }
 
-    public static void deleteEmployeeByID(Integer employeeID){
+    public static void deleteEmployeeByID(Integer employeeID) {
         EntityManager entityManager = EntityManagerCreator.generateEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
@@ -135,20 +135,20 @@ public class EmployeeService {
         employee.setAddress(employeeRequest.getAddress());
 
         employee.setManager((employeeRequest.getManagerID() != null) ?
-                                EmployeeService.getEmployee(employeeRequest.getManagerID()): null);
+                EmployeeService.getEmployee(employeeRequest.getManagerID()) : null);
 
         boolean hasDirectReports = employeeRequest.getDirectReportsIDs() != null && !employeeRequest.getDirectReportsIDs().isEmpty();
         employee.setDirectReports(hasDirectReports ?
                 EmployeeService.getEmployeesByIDs(entityManager, employeeRequest.getDirectReportsIDs())
-                : null );
+                : null);
 
         Department department = entityManager.find(Department.class, employeeRequest.getDepartmentID());
         employee.setDepartment(department);
 
         boolean hasProjects = employeeRequest.getProjectsNumbers() != null && !employeeRequest.getProjectsNumbers().isEmpty();
         employee.setProjects(hasProjects ?
-                            new ProjectService().getProjectsByIDs(entityManager, employeeRequest.getProjectsNumbers())
-                            : null
+                new ProjectService().getProjectsByIDs(entityManager, employeeRequest.getProjectsNumbers())
+                : null
         );
 
         return employee;

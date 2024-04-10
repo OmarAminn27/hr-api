@@ -1,16 +1,13 @@
 package gov.iti.business.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import gov.iti.rest.employee.EmployeeRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -28,7 +25,7 @@ public class Employee {
     private String name;
 
     @Column(name = "dob")
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @Embedded
     private Address address;

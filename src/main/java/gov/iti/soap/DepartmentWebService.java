@@ -5,6 +5,7 @@ import gov.iti.business.service.DepartmentService;
 import gov.iti.rest.resources.department.DepartmentRequest;
 import gov.iti.rest.resources.department.DepartmentResponse;
 import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
 import jakarta.jws.WebResult;
 import jakarta.jws.WebService;
 import jakarta.ws.rs.*;
@@ -26,26 +27,27 @@ public class DepartmentWebService {
 
     @WebMethod
     @WebResult(name = "newlyAddedDepartment")
-    public DepartmentResponse addDepartment (DepartmentRequest departmentRequest){
+    public DepartmentResponse addDepartment (@WebParam(name = "departmentRequest") DepartmentRequest departmentRequest){
         Department department = DepartmentService.addDepartment(departmentRequest);
         return new DepartmentResponse(department);
     }
 
     @WebMethod
-    public void deleteDepartment(Integer departmentNumber) {
+    public void deleteDepartment(@WebParam(name = "departmentNumber") Integer departmentNumber) {
         DepartmentService.deleteDepartmentByNumber(departmentNumber);
     }
 
     @WebMethod
     @WebResult(name = "departmentByNumber")
-    public DepartmentResponse getDepartmentByNumber (Integer departmentNumber){
+    public DepartmentResponse getDepartmentByNumber (@WebParam(name = "departmentNumber") Integer departmentNumber){
         Department departmentByNumber = DepartmentService.getDepartmentByNumber(departmentNumber);
         return new DepartmentResponse(departmentByNumber);
     }
 
 
     @WebMethod
-    public void updateDepartment(Integer departmentNumber, DepartmentRequest departmentRequest){
+    public void updateDepartment(@WebParam(name = "departmentNumber") Integer departmentNumber,
+                                 @WebParam(name = "departmentRequest") DepartmentRequest departmentRequest){
         DepartmentService.updateDepartment(departmentNumber, departmentRequest);
     }
 }

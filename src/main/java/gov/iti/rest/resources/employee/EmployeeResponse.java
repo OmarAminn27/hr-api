@@ -46,7 +46,7 @@ public class EmployeeResponse implements Serializable {
                                     employee.getDirectReports().stream().map(Employee::getId).toList()
                                     : null;
 
-        this.departmentID = employee.getDepartment().getDepartmentNumber();
+        this.departmentID = employee.getDepartment() != null ? employee.getDepartment().getDepartmentNumber() : null;
 
         this.projectsNumbers = (employee.getProjects() != null && !employee.getProjects().isEmpty()) ?
                                     employee.getProjects().stream().map(Project::getProjectNumber).collect(Collectors.toSet())

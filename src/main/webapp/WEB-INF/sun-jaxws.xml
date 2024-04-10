@@ -6,8 +6,8 @@
             implementation="gov.iti.soap.DepartmentWebService"
             url-pattern="/soap/departments" />
 
-<!--    <endpoint-->
-<!--            name="EmployeeWebService"-->
-<!--            implementation="gov.iti.hr.soapcontrollers.EmployeeWebService"-->
-<!--            url-pattern="/soap/employees" />-->
+    <endpoint
+            name="EmployeeWebService"
+            implementation="gov.iti.soap.EmployeeWebService"
+            url-pattern="/soap/employees" />
 </endpoints>

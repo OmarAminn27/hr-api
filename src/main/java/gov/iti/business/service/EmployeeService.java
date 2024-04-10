@@ -1,5 +1,6 @@
 package gov.iti.business.service;
 
+import gov.iti.business.entities.Contract;
 import gov.iti.business.entities.Department;
 import gov.iti.business.entities.Employee;
 import gov.iti.business.entities.Project;
@@ -111,6 +112,19 @@ public class EmployeeService {
             for (Employee directReport : employee.getDirectReports()) {
                 directReport.setManager(null);
             }
+
+            // remove employee's reference from their direct manager's list
+            Employee manager = employee.getManager();
+            if (manager != null) {
+                List<Employee> directReports = manager.getDirectReports();
+                for (Employee directReport : directReports) {
+                    directReport.setManager(null);
+                }
+            }
+
+            // delete employee's contract
+            Contract contract = entityManager.find(Contract.class, employee.getId());
+            entityManager.remove(contract);
 
             employeeDAO.deleteById(entityManager, employeeID);
             transaction.commit();

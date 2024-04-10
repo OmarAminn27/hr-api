@@ -1,10 +1,6 @@
-package gov.iti.presentation.listeners;
+package gov.iti.configuration;
 
-import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
 import gov.iti.business.util.EntityManagerCreator;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 

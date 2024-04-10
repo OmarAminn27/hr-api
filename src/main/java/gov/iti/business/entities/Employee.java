@@ -1,9 +1,15 @@
 package gov.iti.business.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import gov.iti.rest.employee.EmployeeRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +17,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,22 +35,26 @@ public class Employee {
 
     @ManyToOne
     @JoinColumn(name = "manager_id")
+    @JsonManagedReference
     private Employee manager;
 
     @OneToMany(mappedBy = "manager", cascade = {
                 CascadeType.PERSIST, CascadeType.MERGE,
                 CascadeType.REFRESH})
+    @JsonBackReference
     private List<Employee> directReports;
 
     @ManyToOne
     @JoinColumn(name = "department_id")
+    @JsonManagedReference
     private Department department;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,
-                            CascadeType.REFRESH})
+            CascadeType.REFRESH})
     @JoinTable(name = "employee_project",
             joinColumns = @JoinColumn(name = "employee_id"),
             inverseJoinColumns = @JoinColumn(name = "project_number"))
+    @JsonManagedReference
     private Set<Project> projects;
 
     @Override
@@ -60,7 +71,5 @@ public class Employee {
                 ", projects=" + projects.stream().map(Project::getProjectName).toList() +
                 '}';
     }
+
 }
-
-
-// utility methods project

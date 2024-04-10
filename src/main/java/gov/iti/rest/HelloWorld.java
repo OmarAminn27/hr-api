@@ -1,4 +1,4 @@
-package gov.iti;
+package gov.iti.rest;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
